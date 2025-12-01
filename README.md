@@ -1,150 +1,200 @@
-# SYSC4001_A3_P2
-This project implements a concurrent system simulating multiple Teaching Assistants (TAs) marking student exams. The system demonstrates the importance of proper synchronization in concurrent programming by providing two implementations.
+# SYSC4001_A3_P2 - Concurrent TA Marking System
 
-🔹 Part 2a — Unsynchronized Version
+A concurrent system simulating multiple Teaching Assistants (TAs) marking student exams, demonstrating the importance of proper synchronization in concurrent programming.
 
-Multiple TAs run concurrently
+## Overview
 
-Access shared rubric and exam data without synchronization
+This project implements a concurrent system simulating multiple Teaching Assistants (TAs) marking student exams. The system demonstrates the importance of proper synchronization in concurrent programming by providing two implementations:
 
-Race conditions are intentional, demonstrating:
+### Part 2a: Unsynchronized Version
+- **File**: `ta_marking_basic.cpp`
+- **Purpose**: Demonstrate race conditions
+- **Synchronization**: None (intentionally omitted)
+- **Expected Behavior**: Data races, inconsistent results
+- **Learning Objective**: Understand why synchronization is necessary
 
-Inconsistent writes
+### Part 2b: Synchronized Version
+- **File**: `ta_marking_semaphores.cpp`
+- **Purpose**: Correct concurrent implementation
+- **Synchronization**: std::mutex (readers-writers pattern)
+- **Expected Behavior**: No race conditions, consistent results
+- **Learning Objective**: Proper synchronization techniques
 
-Duplicated marking
+## System Requirements
 
-Corrupted rubric entries
+### Software Requirements
 
-🔹 Part 2b — Synchronized Version
+- **Compiler:** g++ 7.0+ with C++17 support
+- **Operating System:** Linux or macOS
+- **Threading Library:** pthread (usually included)
+- **Standard Library:** C++17 STL
 
-Uses C++17 <mutex> to simulate semaphore-based coordination.
+### Hardware Requirements
 
-Implements:
+- **CPU:** Any modern processor with multi-core support
+- **RAM:** Minimum 512 MB
+- **Disk:** 10 MB for source and output
 
-Readers–Writers pattern for rubric access
+## Dependencies
+```bash
+# Ubuntu
+sudo apt-get update
+sudo apt-get install build-essential g++
 
-Per-question mutexes to prevent double marking
+# macOS (requires Homebrew)
+brew install gcc
+```
 
-Exclusive lock for loading the next exam
+## Project Structure
+```
+SYSC4001_A3P2/
+│
+├── ta_marking_basic_<student1>_<student2>.cpp         # Part 2a: No sync
+├── ta_marking_semaphores_<student1>_<student2>.cpp    # Part 2b: With sync
+│
+├── Makefile                                            # Build system
+├── build.sh                                            # Build script
+│
+├── exam_files/                                         # Exam data
+│   ├── exam_1.txt
+│   ├── exam_2.txt
+│   ├── ...
+│   └── exam_9999.txt
+│
+├── rubric.txt                                          # Marking rubric
+│
+├── reportPartC.pdf                                     # Analysis report
+└── README.md                                           # This file
+```
 
-This version prevents all race conditions seen in Part 2a.
+## Installation
 
-✨ Common Behavior (Both Programs)
+### Clone the Repository
+```bash
+git clone 
+cd SYSC4001_A3P2
+```
 
-Review a 5-question rubric
+### Create Exam Files
+```bash
+# Option 1: Using provided script
+./create_exams.sh
 
-Randomly correct one rubric entry
+# Option 2: Manual creation
+for i in {1..25}; do echo $(printf "%04d" $i) > exam_$i.txt; done
+echo "9999" > exam_9999.txt
+```
 
-Mark exams one question at a time
+### Create Rubric File
+```bash
+cat > rubric.txt << EOF
+1, A
+2, B
+3, C
+4, D
+5, E
+EOF
+```
 
-Load the next exam
+## Compilation
 
-Stop automatically at student 9999
+### Option 1: Using Makefile
+```bash
+# Build both versions
+make all
 
-📁 File Structure
-.
+# Build individually
+make basic       # Part 2a
+make semaphores  # Part 2b
 
-├── ta_marking_basic.cpp          # Part 2a (no synchronization)
-
-├── ta_marking_semaphores.cpp     # Part 2b (with synchronization)
-
-├── Makefile                      # Build automation
-
-├── build.sh                      # Optional build script
-
-├── rubric.txt                    
-
-└── README.md
-
-🛠️ How to Compile
-Option 1 — Using the Makefile
-
-Build everything:
-
-make
-
-
-Clean all binaries:
-
+# Clean build artifacts
 make clean
+```
 
-Option 2 — Using build.sh
-
-Make the script executable and run it:
-
+### Option 2: Using build.sh
+```bash
 chmod +x build.sh
 ./build.sh
+```
 
+### Option 3: Manual Compilation
+```bash
+# Part 2a: Basic version (no synchronization)
+g++ -Wall -Wextra -g -std=c++17 -pthread \
+    -o ta_marking_basic ta_marking_basic.cpp
 
-This script:
+# Part 2b: Synchronized version
+g++ -Wall -Wextra -g -std=c++17 -pthread \
+    -o ta_marking_semaphores ta_marking_semaphores.cpp
+```
 
-Creates a rubric.txt file
+**Important:** The `-pthread` flag is required for threading support.
 
-Compiles both Part 2a and Part 2b programs
+## Usage
 
-▶️ How to Run
-Part 2a — Unsynchronized Version
-
-Run with 2 TAs:
-
+### Running Part 2a (Unsynchronized)
+```bash
+# Run with 2 TAs
 ./ta_marking_basic 2
 
-
-Example with more TAs:
-
+# Run with 4 TAs
 ./ta_marking_basic 4
 
-Part 2b — Synchronized Version
+# Run with default (2 TAs)
+./ta_marking_basic
+```
 
-Run with 3 TAs:
-
+### Running Part 2b (Synchronized)
+```bash
+# Run with 3 TAs
 ./ta_marking_semaphores 3
 
+# Run with 5 TAs
+./ta_marking_semaphores 5
 
-Example with more TAs:
+# Run with 10 TAs
+./ta_marking_semaphores 10
+```
 
-./ta_marking_semaphores 6
+### Command-Line Arguments
+```
+./ta_marking_<version> [num_tas]
 
-🧪 Test Cases
+Arguments:
+  num_tas  - Number of concurrent TAs (default: 2, minimum: 2)
+```
 
-Try different numbers of TAs:
+### Expected Output
+```
+Starting TA marking system with 3 TAs (with synchronization)
+TA 1: Started
+TA 2: Started
+TA 3: Started
+TA 1: Reviewing rubric for exam 1
+TA 2: Reviewing rubric for exam 1
+TA 3: Reviewing rubric for exam 1
+TA 1: Reading rubric line 1: 1, A
+TA 2: Reading rubric line 1: 1, A
+TA 3: Reading rubric line 1: 1, A
+TA 1: Needs to correct rubric question 2
+TA 1: Writing correction to rubric question 2
+TA 1: Corrected rubric for question 2: B -> C
+TA 1: Marking question 1 for student 1
+TA 2: Marking question 2 for student 1
+TA 3: Marking question 3 for student 1
+TA 1: Completed marking question 1 for student 1
+...
+All TAs have finished. Marking complete.
+```
 
-./ta_marking_basic 2
-./ta_marking_basic 5
-./ta_marking_semaphores 3
-./ta_marking_semaphores 8
+## 📌 Notes About Exam Files
 
-Expected Results
-Part 2a (Unsynchronized)
+### The assignment originally describes multiple exam text files (exam_1.txt, exam_2.txt, …).
+###  This C++ implementation simulates exams entirely in memory using:
 
-Corrupted rubric entries
-
-Two or more TAs marking the same question
-
-Multiple TAs loading the next exam
-
-Interleaved and inconsistent console output
-
-Part 2b (Synchronized)
-
-Clean, predictable behavior
-
-Correct rubric updates
-
-No duplicated marking
-
-Exactly one TA loads the next exam
-
-All TAs stop at exam 9999
-
-📌 Notes About Exam Files
-
-The assignment originally describes multiple exam text files (exam_1.txt, exam_2.txt, …).
-This C++ implementation simulates exams entirely in memory using:
-
-exam_data.student_number
+### exam_data.student_number
 
 
-Student numbers increment from 1 → 9999
+### Student numbers increment from 1 → 9999
 
-No external exam files are required
+### No external exam files are required
