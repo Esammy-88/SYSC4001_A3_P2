@@ -1,5 +1,6 @@
 # SYSC4001_A3_P2
 This project implements a concurrent system simulating multiple Teaching Assistants (TAs) marking student exams. The system demonstrates the importance of proper synchronization in concurrent programming by providing two implementations.
+
 🔹 Part 2a — Unsynchronized Version
 
 Multiple TAs run concurrently
@@ -42,11 +43,17 @@ Stop automatically at student 9999
 
 📁 File Structure
 .
+
 ├── ta_marking_basic.cpp          # Part 2a (no synchronization)
+
 ├── ta_marking_semaphores.cpp     # Part 2b (with synchronization)
+
 ├── Makefile                      # Build automation
+
 ├── build.sh                      # Optional build script
-├── rubric.txt                    # Auto-generated rubric file
+
+├── rubric.txt                    
+
 └── README.md
 
 🛠️ How to Compile
